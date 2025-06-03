@@ -1,0 +1,7 @@
+streamlit
+pandas
+py2neo
+neo4j
+fastapi
+openai
+uvicorn

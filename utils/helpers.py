@@ -1,0 +1,1 @@
+def normalize_amount(amount): return float(amount)

@@ -1,0 +1,1 @@
+def compute_risk(transactions): return [{'tx_id': 'T123', 'score': 0.75}]

@@ -1,0 +1,1 @@
+def generate_sar_summary(account_id): return f'SAR for {account_id}'
