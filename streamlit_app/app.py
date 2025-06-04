@@ -13,7 +13,7 @@ st.title("🧠 AI Fraud Detection with Neo4j")
 st.markdown("Visualize suspicious patterns using Neo4j graph database.")
 
 # Debug: display loaded secrets
-st.write("Loaded secrets keys:", list(st.secrets.keys()))
+#st.write("Loaded secrets keys:", list(st.secrets.keys()))
 
 # Smart fallback to secrets first, then .env
 NEO4J_URI = st.secrets.get("NEO4J_URI", os.getenv("NEO4J_URI"))
