@@ -69,3 +69,47 @@ with tab4:
             st.subheader("Potential Transaction Links:")
             for f in findings:
                 st.markdown(f"- **{f['customer']}** sent from `{f['from_account']}` to `{f['to_account']}` — Balance: {f['suspicious_balance']}")
+
+import openai
+
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY"))
+openai.api_key = OPENAI_API_KEY
+
+tab5 = st.tabs(["🧠 Generate SAR"])[0]
+
+with tab5:
+    st.subheader("LLM-Generated Suspicious Activity Report (SAR)")
+    account_options = df_accounts["account_id"].unique()
+    selected_id = st.selectbox("Select Account ID to Analyze", account_options)
+
+    if st.button("Generate LLM SAR"):
+        with driver.session() as session:
+            query = """
+            MATCH (c:Customer)-[:OWNS]->(a:Account {id: $acc_id})-[:TRANSFERRED_TO]->(b:Account)
+            RETURN c.name AS customer, a.id AS from_account, b.id AS to_account, b.balance AS suspicious_balance
+            LIMIT 10
+            """
+            tx_result = session.run(query, acc_id=selected_id)
+            tx_data = tx_result.data()
+
+        if not tx_data:
+            st.info("No graph data found for this account.")
+        else:
+            summary_prompt = f"""
+            You are an anti-money laundering analyst. Based on the following transaction graph data, write a concise Suspicious Activity Report summary:
+
+            {tx_data}
+
+            Emphasize suspicious transaction flows, sudden balance increases, or circular money movements.
+            """
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "user", "content": summary_prompt}],
+                    max_tokens=300
+                )
+                sar_output = response['choices'][0]['message']['content']
+                st.success("Generated SAR Summary:")
+                st.markdown(sar_output)
+            except Exception as e:
+                st.error(f"OpenAI error: {e}")
