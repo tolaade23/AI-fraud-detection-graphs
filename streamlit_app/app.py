@@ -1,11 +1,21 @@
 import streamlit as st
 import pandas as pd
 from neo4j import GraphDatabase
+import os
+from dotenv import load_dotenv
 
+# Set up Streamlit layout
 st.set_page_config(page_title="AI Fraud Graph Visualizer", layout="wide")
-
 st.title("🧠 AI Fraud Detection with Neo4j")
 st.markdown("Visualize suspicious patterns using Neo4j graph database.")
+
+# Load .env if running locally
+load_dotenv()
+
+# Safe fallback if not using .env (e.g. on Streamlit Cloud)
+NEO4J_URI = os.getenv("NEO4J_URI", "neo4j+s://658ecbb9.databases.neo4j.io")
+NEO4J_USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "fnP8gdAU3XfuItnVcpZsmvQ1WPac8Fm4aruFf7VoN3o")
 
 # Load data
 try:
@@ -19,14 +29,11 @@ except FileNotFoundError as e:
 # Neo4j connection setup
 @st.cache_resource
 def get_neo4j_driver():
-    uri = st.secrets["NEO4J_URI"]
-    user = st.secrets["NEO4J_USERNAME"]
-    password = st.secrets["NEO4J_PASSWORD"]
-    return GraphDatabase.driver(uri, auth=(user, password))
+    return GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 driver = get_neo4j_driver()
 
-# Tabs
+# UI Tabs
 tab1, tab2, tab3, tab4 = st.tabs(["📄 Customers", "🏦 Accounts", "💸 Transactions", "📊 Graph Summary"])
 
 with tab1:
@@ -60,4 +67,6 @@ with tab4:
         else:
             st.subheader("Potential Transaction Links:")
             for f in findings:
-                st.markdown(f"- **{f['customer']}** sent from `{f['from_account']}` to `{f['to_account']}` — Balance: {f['suspicious_balance']}")
+                st.markdown(
+                    f"- **{f['customer']}** sent from `{f['from_account']}` to `{f['to_account']}` — Balance: {f['suspicious_balance']}"
+                )
