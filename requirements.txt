@@ -5,6 +5,7 @@ neo4j
 fastapi
 openai
 uvicorn
+python-dotenv
 git add requirements.txt
 git commit -m "Add missing dotenv dependency"
 git push origin main
