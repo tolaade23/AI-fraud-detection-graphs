@@ -60,7 +60,6 @@ ai-fraud-detection-graphs/
 
 4. **(Optional) Deploy to Streamlit Cloud**  
    - Add your secrets in the **Streamlit Cloud secrets manager**.  
-   - App gracefully falls back to `.env` if secrets are not found.
 
 ---
 
@@ -89,14 +88,6 @@ Unusual Behavior: Circular transfers totaling $85,000 within 2 hours.
 Risk Level: High
 Summary: Activity suggests rapid fund movement across connected accounts to avoid detection.
 ```
-
----
-
-## 🎥 Demo & Screenshots
-
-Coming soon: Hosted version + walk-through video  
-(*You can link Loom/YouTube demo here later for interviews or freelance gigs*)
-
 ---
 
 ## 📌 Technologies Used
